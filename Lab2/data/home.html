@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <script>
+            var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
+                connection.onopen = function(){
+                connection.send('Connect ' + new Date()); 
+            };
+
+            connection.onerror = function(error){
+                console.log('WebSocket Error ', error);
+            };
+
+            connection.onmessage = function(e){
+                console.log('Server: ', e.data);
+            };
+
+            function send_on(){
+                console.log('Button ON is pressed!'); 
+                connection.send('#O');
+            }
+            function send_off(){
+                console.log('Button OFF is pressed!'); 
+                connection.send('#F');
+            }
+        </script>
+    </head>
+
+    <body>
+        <b>Load html from separate file</b><br/>
+        <br/>
+        send: <input id="r" type="range" min="0" max="255" step="1" /><br/>
+        <br/>
+        <br/> <input type="button" name="b_on" value="LED ON" onclick="send_on();" />
+        <br/>
+        <br/> <input type="button" name="b_off" value="LED OFF" onclick="send_off();" />
+        <br/>
+        http://arduino-er.blogspot.com/
+    </body>
+</html>
