@@ -1,5 +1,9 @@
 <html>
     <head>
+
+        <meta name="viewport" content="width=device-width" />
+        <link rel="stylesheet" type="text/css" href="style.css">
+
         <script>
             var connection = new WebSocket('ws://'+location.hostname+':81/', ['arduino']);
                 connection.onopen = function(){
@@ -26,14 +30,17 @@
     </head>
 
     <body>
-        <b>Load html from separate file</b><br/>
+        <div>
+            <h1> Group Cannon </h1>
+            <h2> Lab 2 </h2>
         <br/>
-        send: <input id="r" type="range" min="0" max="255" step="1" /><br/>
         <br/>
-        <br/> <input type="button" name="b_on" value="LED ON" onclick="send_on();" />
         <br/>
-        <br/> <input type="button" name="b_off" value="LED OFF" onclick="send_off();" />
+        <br/> 
+        <input type="button" name="b_on" value="LED ON" onclick="send_on();" />
+        <input type="button" name="b_off" value="LED OFF" onclick="send_off();" />
         <br/>
-        http://arduino-er.blogspot.com/
+       </div>
+
     </body>
 </html>
