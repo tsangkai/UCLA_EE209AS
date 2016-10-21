@@ -22,9 +22,9 @@ WebSocketsServer webSocket = WebSocketsServer(81);
 const int LED_PIN = LED_BUILTIN;
 
 String html_home;
+String css_code;
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght) {
-
     switch(type) {
         case WStype_DISCONNECTED:
             Serial.printf("[%u] Disconnected!\n", num);
@@ -38,7 +38,7 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t lenght
                 webSocket.sendTXT(num, "Connected");
             }
             break;
-        case WStype_TEXT:
+        case WStype_TEXT:  // TODO
             Serial.printf("[%u] get text: %s\n", num, payload);
 
             if(payload[0] == '#') {
@@ -79,7 +79,42 @@ void prepareFile(){
 
         //Serial.print(html_home);
     }
+
+    File css_file = SPIFFS.open("/style.css", "r");
+    if (!css_file) {
+        Serial.println("CSS file open failed");  
+    } 
+    else {
+        Serial.println("CSS file open success");
+
+        css_code = "";
+        while (css_file.available()) {
+            //Serial.write(file.read());
+            String line = css_file.readStringUntil('\n');
+            css_code += line + "\n";
+        }
+        css_file.close();
+
+        Serial.println(css_code);
+    }
+
+
 }
+
+//void handleResponse() {
+//    if (server.uri() == "/style.css") {
+//        server.send(200, "text/css", css_code);
+//        Serial.println("CSS load!");
+//        return;
+//    }
+//    else {
+//        server.send(200, "text/html", html_home);
+//        Serial.println("HTML load!");
+//        return;
+     
+//    }
+//}
+
 
 void setup() {
     Serial.begin(115200);
@@ -87,14 +122,9 @@ void setup() {
     //Serial.setDebugOutput(true);
     Serial.println();
 
-    for(uint8_t t = 4; t > 0; t--) {
-        Serial.printf("[SETUP] BOOT WAIT %d...\n", t);
-        Serial.flush();
-        delay(1000);
-    }
 
 
-    // setup LED pin
+    // setup harware output // TODO
     Serial.println("Setup LED pins");
     pinMode(LED_PIN, OUTPUT);    //GPIO16 is an OUTPUT pin;
     digitalWrite(LED_PIN, HIGH); //Initial state is ON
@@ -116,10 +146,18 @@ void setup() {
     }
 
     // handle index
+    //server.on("/", handleResponse);
     server.on("/", []() {
         // send home.html
         server.send(200, "text/html", html_home);
     });
+
+    server.on("/style.css", []() {
+        // send home.html
+        server.send(200, "text/css", css_code);
+    });
+
+
 
     server.begin();
 
@@ -135,3 +173,4 @@ void loop() {
     webSocket.loop();
     server.handleClient();
 }
+
